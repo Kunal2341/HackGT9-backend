@@ -14,7 +14,7 @@ BORDER_SHAPE_ADD = 20
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "1.jpg")
+example_img = os.path.join(imagesFolder, "2.jpg")
 
 #List of xy and width 
 img = cv2.imread(example_img)
@@ -54,11 +54,9 @@ for c in contours:
         dimensionsShapes.append([x,y,w,h])
         cv2.rectangle(imSizeRestrict,(x,y),(x+w,y+h),(0,100,0),2)
         cv2.putText(imSizeRestrict,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
-print("-"*10)
-print("Detected " +str(len(sizedContours)) + " shapes.")
 
-#cv2.imshow('Known', imSizeRestrict)
-#cv2.waitKey(0)
+cv2.imshow('Known', imSizeRestrict)
+cv2.waitKey(0)
 
 
 # Checks each value with all others in arrary to see intersection, removes smaller array
@@ -71,22 +69,26 @@ for shape in dimensionsShapes:
                 dimensionsShapes.remove(shape)
 
 textBuffer = 5
-
+printArray = []
 ct = 1
 for shapeFinalizaed in dimensionsShapes:
     x, y, w, h = shapeFinalizaed
     x, y = x - BORDER_SHAPE_ADD, y - BORDER_SHAPE_ADD
     w, h = w + BORDER_SHAPE_ADD * 2, h + BORDER_SHAPE_ADD  * 2
+    printArray.append([x,y,w,h])
     cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
     cv2.putText(im,"Shape - " + str(ct),(x+w+textBuffer,y+h),0,0.3,(255,0,0))
     ct += 1
 
-#cv2.imshow('Known', im)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.imshow('Known', im)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("-"*10)
+print("Detected " +str(len(dimensionsShapes)) + " shapes.")
 
 
-
+print(printArray)
 
 
 
@@ -155,7 +157,6 @@ for contour in shapeCountour:
     approx = cv2.approxPolyDP(contour, 0.05 * cv2.arcLength(contour, True), True)
 
     if not (cv2.contourArea(approx) < 10):
-        print(len(approx))
         # using drawContours() function
         cv2.drawContours(img, [contour], 0, (0, 0, 255), 1)
         # finding center point of shape

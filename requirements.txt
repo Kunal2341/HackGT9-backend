@@ -5,3 +5,5 @@ matplotlib
 mediapipe
 pytest
 requests
+google-auth
+google-cloud-vision

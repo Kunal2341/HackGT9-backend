@@ -1,18 +1,28 @@
 from fastapi import FastAPI
+import cv2
+import numpy as np
+import os
 
 app = FastAPI()
-app.areas_to_tunes = []
+app.areas_to_tunes = {}
 app.shapes = {
     -1: "random",
     0: "drum",
     1: "piano",
     2: "hat" 
 }
+app.folder_path = "ex-images"
+
+def intersects(box1, box2):
+    """Helper function for get_coordinates"""
+
+    return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
 
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""
-    import cv2
-    import numpy as np
+
+    path_to_image = os.path.join(app.folder_path, "1.jpg")
+    print(path_to_image)
     LOWER_BLUE_COLOR = [25,25,0]
     UPPER_BLUE_COLOR = [255,255,255]
     CONTOUR_SIZE_RESTRICTION = 40
@@ -53,6 +63,7 @@ def get_coordinates(path_to_image: str):
         bufferedDimensions.append([x - BORDER_SHAPE_ADD, y - BORDER_SHAPE_ADD,
             w + BORDER_SHAPE_ADD * 2, h + BORDER_SHAPE_ADD * 2])
 
+    print(bufferedDimensions)
     return bufferedDimensions
 
 def get_shape(path_to_image, coordinate):
@@ -90,15 +101,15 @@ def update_mapping(path_to_image: str):
     """Updates the areas_to_tunes"""
 
     coordinates = get_coordinates(path_to_image)
-    temp = []
+    temp = {}
 
     for coordinate in coordinates:
-        temp[coordinate] = get_tune(coordinate)
+        temp[tuple(coordinate)] = get_tune(coordinate)
 
     app.areas_to_tunes = temp
 
 @app.get("/tune/{coordinate}")
-def get_tune(coordinate):
+def tune(coordinate):
     """Returns the tune for the coordinate clicked"""
     
     return app.areas_to_tunes

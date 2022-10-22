@@ -3,3 +3,5 @@ fastapi
 opencv-python
 matplotlib
 mediapipe
+pytest
+requests

@@ -14,7 +14,7 @@ BORDER_SHAPE_ADD = 20
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "2.jpg")
+example_img = os.path.join(imagesFolder, "1.jpg")
 
 #List of xy and width 
 img = cv2.imread(example_img)

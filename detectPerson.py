@@ -1,10 +1,5 @@
 
-
-# For static images:
 checkHuman("ex-images/1.jpg")
-
-
-
 
 
 def checkHuman(imageFile):

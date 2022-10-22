@@ -1,7 +1,8 @@
 from google.oauth2 import service_account
 import time
 start_time = time.time()
-credentials = service_account.Credentials.from_service_account_file("hackgt-366316-0c3450bdab27.json")
+credentials = service_account.Credentials.from_service_account_file("../hackgt-366316-0c3450bdab27.json")
+
 def detect_text(path):
     """Detects text in the file."""
     from google.cloud import vision
@@ -34,5 +35,5 @@ def detect_text(path):
 
 
 
-detect_text("ex-images/1.jpg")
+detect_text("letterImageDetect.png")
 print(time.time() - start_time)

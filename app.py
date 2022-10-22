@@ -21,8 +21,6 @@ def intersects(box1, box2):
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""
 
-    path_to_image = os.path.join(app.folder_path, "1.jpg")
-    print(path_to_image)
     LOWER_BLUE_COLOR = [25,25,0]
     UPPER_BLUE_COLOR = [255,255,255]
     CONTOUR_SIZE_RESTRICTION = 40
@@ -63,12 +61,13 @@ def get_coordinates(path_to_image: str):
         bufferedDimensions.append([x - BORDER_SHAPE_ADD, y - BORDER_SHAPE_ADD,
             w + BORDER_SHAPE_ADD * 2, h + BORDER_SHAPE_ADD * 2])
 
-    print(bufferedDimensions)
     return bufferedDimensions
 
 def get_shape(path_to_image, coordinate):
     """-1: Random, 0: Drum, 1: Piano Tile, 2: High Hat"""
     
+    img = cv2.imread(path_to_image)
+
     return -1
 
 def find_note(path_to_image, coordinate):
@@ -96,15 +95,17 @@ def get_tune(path_to_image, coordinate):
         "note": note
     }
 
-@app.post("/update/{path_to_image}")
-def update_mapping(path_to_image: str):
+@app.post("/update/{file_name}")
+def update_mapping(file_name: str):
     """Updates the areas_to_tunes"""
+
+    path_to_image = os.path.join(app.folder_path, "1.jpg")
 
     coordinates = get_coordinates(path_to_image)
     temp = {}
 
     for coordinate in coordinates:
-        temp[tuple(coordinate)] = get_tune(coordinate)
+        temp[tuple(coordinate)] = get_tune(path_to_image, coordinate)
 
     app.areas_to_tunes = temp
 

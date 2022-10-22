@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 from utils import perform_cleanup
-from keras.models import load_model
+from keras.models import load_model, intersects
 
 app = FastAPI()
 app.areas_to_tunes = {}
@@ -15,11 +15,6 @@ app.shapes = {
 }
 app.folder_path = "ex-images"
 app.model = load_model("./shapes.model.01.h5")
-
-def intersects(box1, box2):
-    """Helper function for get_coordinates"""
-
-    return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
 
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""
@@ -75,7 +70,6 @@ def get_coordinates(path_to_image: str):
         bufferedDimensions.append([x,y,w,h])
     return bufferedDimensions
 
-
 def get_shape(path_to_image, coordinate):
     """0: Random, 1: Drum, 2: Piano Tile, 3: High Hat"""
     
@@ -92,7 +86,7 @@ def get_shape(path_to_image, coordinate):
     roi = img[y1:y2, x1:x2]
 
     img = perform_cleanup(roi)
-    prediction = app.model.predict(img)
+    prediction = np.argmax(app.model.predict(img))
     return prediction
 
 def find_note(path_to_image, coordinate):
@@ -144,7 +138,7 @@ def get_tune(path_to_image, coordinate):
 
     shape_idx = get_shape(path_to_image, coordinate)
     note = ''
-    if shape_idx > -1:
+    if shape_idx > 0:
         note = find_note(path_to_image, coordinate)
     else:
         note = generate_random_tune(path_to_image, coordinate)

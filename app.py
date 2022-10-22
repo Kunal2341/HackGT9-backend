@@ -2,16 +2,19 @@ from fastapi import FastAPI
 import cv2
 import numpy as np
 import os
+from utils import perform_cleanup
+from keras.models import load_model
 
 app = FastAPI()
 app.areas_to_tunes = {}
 app.shapes = {
-    -1: "random",
-    0: "drum",
-    1: "piano",
-    2: "hat" 
+    0: "random",
+    1: "drum",
+    2: "piano",
+    3: "hat" 
 }
 app.folder_path = "ex-images"
+app.model = load_model("./shapes.model.01.h5")
 
 def intersects(box1, box2):
     """Helper function for get_coordinates"""
@@ -74,7 +77,7 @@ def get_coordinates(path_to_image: str):
 
 
 def get_shape(path_to_image, coordinate):
-    """-1: Random, 0: Drum, 1: Piano Tile, 2: High Hat"""
+    """0: Random, 1: Drum, 2: Piano Tile, 3: High Hat"""
     
     img = cv2.imread(path_to_image)
 
@@ -88,8 +91,9 @@ def get_shape(path_to_image, coordinate):
 
     roi = img[y1:y2, x1:x2]
 
-
-    return -1
+    img = perform_cleanup(roi)
+    prediction = app.model.predict(img)
+    return prediction
 
 def find_note(path_to_image, coordinate):
     """Return A - G note (Just return letter recognized inside shape, if none return empty string"""

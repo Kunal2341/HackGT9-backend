@@ -7,3 +7,5 @@ pytest
 requests
 google-auth
 google-cloud-vision
+imageio
+keras

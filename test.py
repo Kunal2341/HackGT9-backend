@@ -3,49 +3,14 @@ import cv2
 import numpy as np
 import os
 from app import app
+from numpy import savetxt
+from utils import perform_cleanup
+from keras.models import load_model
 
 client = TestClient(app)
 
 def test_update():
     resp = client.post("/update/2.jpg")
-
-def perform_detection(imageread):
-
-    #converting the input image to grayscale image using cvtColor() function
-    imagegray = cv2.cvtColor(imageread, cv2.COLOR_BGR2GRAY)
-    #using threshold() function to convert the grayscale image to binary image
-    _, imagethreshold = cv2.threshold(imagegray, 245, 255, cv2.THRESH_BINARY_INV)
-
-    #finding the contours in the given image using findContours() function
-    imagecontours, _ = cv2.findContours(imagethreshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    #for each of the contours detected, the shape of the contours is approximated using approxPolyDP() function and the contours are drawn in the image using drawContours() function
-    # print(imagecontours)
-    for count in imagecontours:
-        epsilon = 0.01 * cv2.arcLength(count, True)
-        approximations = cv2.approxPolyDP(count, epsilon, True)
-        cv2.drawContours(imageread, [approximations], 0, (0), 3)
-        #the name of the detected shapes are written on the image
-        i, j = approximations[0][0] 
-        if len(approximations) == 3:
-            cv2.putText(imageread, "Triangle", (i, j), cv2.FONT_HERSHEY_COMPLEX, 1, 0, 2)
-        elif len(approximations) == 4:
-            cv2.putText(imageread, "Rectangle", (i, j), cv2.FONT_HERSHEY_COMPLEX, 1, 0, 2)
-        elif len(approximations) == 5:
-            cv2.putText(imageread, "Pentagon", (i, j), cv2.FONT_HERSHEY_COMPLEX, 1, 0, 2)
-        elif 6 < len(approximations) < 15:
-            cv2.putText(imageread, "Ellipse", (i, j), cv2.FONT_HERSHEY_COMPLEX, 1, 0, 2)
-        else:
-            cv2.putText(imageread, "Circle", (i, j), cv2.FONT_HERSHEY_COMPLEX, 1, 0, 2)
-    #displaying the resulting image as the output on the screen
-    cv2.imshow(str(len(approximations)), imageread)
-    cv2.waitKey(0)
-
-def perform_prediction(img):
-
-    imagegray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, imagethreshold = cv2.threshold(imagegray, 127, 255, cv2.THRESH_BINARY_INV)
-    cv2.imshow('bruh', imagethreshold)
-    cv2.waitKey(0)
 
 def show_shapes():
     file_name = "2.jpg"
@@ -53,6 +18,13 @@ def show_shapes():
     coords = client.get("/shapes/" + file_name).json()
     # print(coords.json())
     img = cv2.imread("ex-images/" + file_name)
+    model = load_model("./shapes.model.01.h5")
+    shapes = {
+        0: "random",
+        1: "drum",
+        2: "piano",
+        3: "hat" 
+    }
 
     for shape in coords[2:]:
         x1 = shape[0]
@@ -62,9 +34,10 @@ def show_shapes():
         x2 = x1 + w
         y2 = y1 + h
         croppedImg = img[y1:y2, x1:x2]
-        perform_prediction(croppedImg)
-        # cv2.imshow('bruh', croppedImg)
-        # cv2.waitKey(0)
+        roi = perform_cleanup(croppedImg)
+        shape = model.predict(roi)
+        cv2.imshow(shapes[shape], croppedImg)
+        cv2.waitKey(0)
 
     cv2.destroyAllWindows() 
 

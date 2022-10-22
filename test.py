@@ -6,7 +6,7 @@ from app import app
 
 client = TestClient(app)
 
-def test_users_endpoint():
+def test_update():
     resp = client.post("/update/1.jpg")
 
     # assert resp.status_code == 200
@@ -33,4 +33,5 @@ def show_shapes():
 
     cv2.destroyAllWindows() 
 
-test_users_endpoint()
+test_update()
+show_shapes()

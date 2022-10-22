@@ -76,6 +76,24 @@ def get_coordinates(path_to_image: str):
 def get_shape(path_to_image, coordinate):
     """-1: Random, 0: Drum, 1: Piano Tile, 2: High Hat"""
     
+    img = cv2.imread(path_to_image)
+
+    x1 = coordinate[0]
+    y1 = coordinate[1]
+    w = coordinate[2]
+    h = coordinate[3]
+
+    x2 = x1 + w
+    y2 = y1 + h
+
+    roi = img[y1:y2, x1:x2]
+
+
+    return -1
+
+def find_note(path_to_image, coordinate):
+    """Return A - G note (Just return letter recognized inside shape, if none return empty string"""
+    # letter recognition  in shape
     #img = cv2.imread(path_to_image)
 
     x1 = coordinate[0]
@@ -110,11 +128,6 @@ def get_shape(path_to_image, coordinate):
     if response.error.message:
         return -2
 
-    return -1
-
-def find_note(path_to_image, coordinate):
-    """Return A - G note (Just return letter recognized inside shape, if none return empty string"""
-    # letter recognition  in shape
     return ""
 
 def generate_random_tune(path_to_image, coordinate):

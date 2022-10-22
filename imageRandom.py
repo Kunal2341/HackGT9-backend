@@ -56,6 +56,15 @@ for shape in boundingBox:
     print("Saved" + "croppedImages/croppedImg" + str(shapeCT) + ".png")
     print("\t" + str(round(area_ratio, 3)))
 
+    # We can play around with area ratio to calculate the random - that will mean how dense the drawing is
+
+    M = cv2.moments(croppedImg)
+    print("center X : '{}'".format(round(M['m10'] / M['m00'])))
+    print("center Y : '{}'".format(round(M['m01'] / M['m00'])))
+
+    # This is the center of the masked image compared to the center of the frame to measure center density
+
+    print(math.dist([round(M['m10'] / M['m00']), round(M['m01'] / M['m00'])], [int(croppedImg.shape[1]/2), int(croppedImg[0]/2)]))
 
 for contour in contours:
     perimeter = cv2.arcLength(contour, True)
@@ -73,3 +82,5 @@ mask = np.zeros((mask_blue.shape[0] + 2, mask_blue.shape[1] + 2), np.uint8)
 cv2.floodFill(mask_blue, mask, (0,0), (255,255,255))
 cv2.imwrite("HI.png",mask)
 """
+
+#https://medium.com/analytics-vidhya/contours-and-convex-hull-in-opencv-python-d7503f6651bc

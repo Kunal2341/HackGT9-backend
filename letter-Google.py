@@ -9,9 +9,11 @@ def detect_text(path):
     import io
     client = vision.ImageAnnotatorClient(credentials=credentials)
 
+
+
     with io.open(path, 'rb') as image_file:
         content = image_file.read()
-
+    print(content)
     image = vision.Image(content=content)
 
     response = client.text_detection(image=image)
@@ -19,12 +21,18 @@ def detect_text(path):
     print('Texts:')
 
     for text in texts:
+        p1 = Polygon([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
+        p2 = Polygon([(0,1), (1,0), (1,1)])
+        print(p1.intersects(p2))
         print('\n"{}"'.format(text.description))
 
         vertices = (['({},{})'.format(vertex.x, vertex.y)
                     for vertex in text.bounding_poly.vertices])
 
         print('bounds: {}'.format(','.join(vertices)))
+
+
+
 
     if response.error.message:
         raise Exception(

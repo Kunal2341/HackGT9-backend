@@ -120,7 +120,7 @@ def get_coordinates(path_to_image: str):
 def get_shape(path_to_image, coordinate):
     """-1: Random, 0: Drum, 1: Piano Tile, 2: High Hat"""
     
-    img = cv2.imread(path_to_image)
+    #img = cv2.imread(path_to_image)
 
     x1 = coordinate[0]
     y1 = coordinate[1]
@@ -130,7 +130,29 @@ def get_shape(path_to_image, coordinate):
     x2 = x1 + w
     y2 = y1 + h
 
-    roi = img[y1:y2, x1:x2]
+    #roi = img[y1:y2, x1:x2]
+
+    from google.oauth2 import service_account
+    credentials = service_account.Credentials.from_service_account_file("../hackgt-366316-0c3450bdab27.json")
+    from google.cloud import vision
+    import io
+    client = vision.ImageAnnotatorClient(credentials=credentials)
+
+    with io.open(path_to_image, 'rb') as image_file:
+        content = image_file.read()
+    image = vision.Image(content=content)
+
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+    
+    for text in texts:
+        p1 = Polygon([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
+        p2 = Polygon([(x1,y1), (x2,y1), (x1,y2), (x2,y2)])
+        if(p1.intersects(p2)):
+            return(text.description)
+            #Change what too return 
+    if response.error.message:
+        return -2
 
     return -1
 

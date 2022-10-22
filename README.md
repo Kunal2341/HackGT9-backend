@@ -1,14 +1,20 @@
+
+
+
+
 # HackGT9-backend
 
-
-conda create -n hackgt-9 python=3.9 <br/>
-conda activate hackgt-9 <br/>
-pip install -r requirements.txt <br/>
-
-# Running the server
+```
+conda create -n hackgt-9 python=3.9 
+conda activate hackgt-9 
+pip install -r requirements.txt 
+```
 
 # Testing Server
 
-client = TestClient(app) <br/>
-client.post("/update/'./test_img.jpeg'") <br/>
-print(client.get("/mapping")) <br/>
+
+```
+client = TestClient(app)
+client.post("/update/'./test_img.jpeg'")
+print(client.get("/mapping"))
+```

@@ -10,8 +10,8 @@ example_img = os.path.join(imagesFolder, "1.jpg")
 #List of xy and width 
 
 img = cv2.imread(example_img)
-# converting image into grayscale image
 
+# converting image into grayscale image
 scale_percent = 15
 width = int(img.shape[1] * scale_percent / 100)
 height = int(img.shape[0] * scale_percent / 100)
@@ -20,9 +20,9 @@ dsize = (width, height)
 img = cv2.resize(img, dsize)
 
 
-
+# Get image from between 2 main colors 
 imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-lower_blue = np.array([167,156,135])
+lower_blue = np.array([25,25,0]) 
 upper_blue = np.array([255,255,255])
 mask_blue = cv2.inRange(imghsv, lower_blue, upper_blue)
 contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -30,26 +30,13 @@ im = np.copy(img)
 cv2.drawContours(im, contours, -1, (0, 255, 0), 1)
 
 
-cv2.imshow('shapes', im)
+cv2.imshow('Test Image Between 2 colors', im)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 blur = cv2.GaussianBlur(gray, (0,0), sigmaX=100, sigmaY=100)
@@ -58,7 +45,7 @@ thresh = cv2.threshold(divide, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 morph = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
-cv2.imshow('shapes', morph)
+cv2.imshow('Gausian Blur Something', morph)
 cv2.waitKey(0)
 
 
@@ -66,10 +53,8 @@ cv2.waitKey(0)
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 _, threshold = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-  
 # using a findContours() function
 contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
 cv2.imshow('shapes', img)
 
 i = 0
@@ -126,4 +111,3 @@ cv2.imshow('shapes', img)
   
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-"""

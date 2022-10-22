@@ -10,11 +10,11 @@ def intersects(box1, box2):
 LOWER_BLUE_COLOR = [25,25,0]
 UPPER_BLUE_COLOR = [255,255,255]
 CONTOUR_SIZE_RESTRICTION = 40
-BORDER_SHAPE_PERCENT = 0.05
+BORDER_SHAPE_PERCENT = 0.03
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "1.jpg")
+example_img = os.path.join(imagesFolder, "2.jpg")
 
 #List of xy and width 
 imgO = cv2.imread(example_img)
@@ -89,7 +89,7 @@ for shapeFinalizaed in dimensionsShapes:
     savingImg = cv2.putText(savingImg,"Shape - " + str(ct),(x+w+textBuffer,y+h),0,0.3,(255,0,0))
     ct += 1
 
-cv2.imwrite("test.png", savingImg)
+cv2.imwrite("ResultingImg.png", savingImg)
 
 #cv2.imshow('Known', im)
 #cv2.waitKey(0)

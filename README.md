@@ -1,19 +1,14 @@
 # HackGT9-backend
 
-To run the files 
 
-`pip install requirments.txt`
+conda create -n hackgt-9 python=3.9 <br/>
+conda activate hackgt-9 <br/>
+pip install -r requirements.txt <br/>
 
+# Running the server
 
-## Algorithm 
-- Size of Image in relation to other images
-- 
+# Testing Server
 
-
-
-
-|Backend||
-|-|-|
-|This is cool||
-
-
+client = TestClient(app) <br/>
+client.post("/update/'./test_img.jpeg'") <br/>
+print(client.get("/mapping")) <br/>

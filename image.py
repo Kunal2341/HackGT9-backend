@@ -3,9 +3,18 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 
-imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "3.jpg")
+def intersects(box1, box2):
+    return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
 
+
+LOWER_BLUE_COLOR = [25,25,0]
+UPPER_BLUE_COLOR = [255,255,255]
+CONTOUR_SIZE_RESTRICTION = 40
+BORDER_SHAPE_ADD = 15
+
+
+imagesFolder = "ex-images"
+example_img = os.path.join(imagesFolder, "1.jpg")
 
 #List of xy and width 
 img = cv2.imread(example_img)
@@ -18,39 +27,37 @@ dsize = (width, height)
 # resize image
 img = cv2.resize(img, dsize)
 
-def intersects(box1, box2):
-    return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
-
 # Get image from between 2 main colors 
 imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-lower_blue = np.array([25,25,0]) 
-upper_blue = np.array([255,255,255])
+lower_blue = np.array(LOWER_BLUE_COLOR) 
+upper_blue = np.array(UPPER_BLUE_COLOR)
 mask_blue = cv2.inRange(imghsv, lower_blue, upper_blue)
 #Show masked image
 # cv2.imshow("winname" , mask_blue)
 contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 im = np.copy(img)
+imSizeRestrict = np.copy(img)
 
-imKnown = np.copy(img)
+
 sizedContours = []
 dimensionsShapes = []
 for c in contours:
-    if (cv2.contourArea(c) > 40): 
+    if (cv2.contourArea(c) > CONTOUR_SIZE_RESTRICTION): 
         sizedContours.append(c)
         rect = cv2.boundingRect(c)
         x,y,w,h = rect
         dimensionsShapes.append([x,y,w,h])
-        cv2.rectangle(imKnown,(x,y),(x+w,y+h),(0,100,0),2)
-        cv2.putText(imKnown,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
-
+        cv2.rectangle(imSizeRestrict,(x,y),(x+w,y+h),(0,100,0),2)
+        cv2.putText(imSizeRestrict,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
+print("-"*10)
 print("Detected " +str(len(sizedContours)) + " shapes.")
-cv2.imshow('Known', imKnown)
+
+cv2.imshow('Known', imSizeRestrict)
 cv2.waitKey(0)
-cv2.destroyAllWindows()
 
 
-print(dimensionsShapes)
+# Checks each value with all others in arrary to see intersection, removes smaller array
 for shape in dimensionsShapes:
     for shapeCheck in dimensionsShapes:
         if intersects((shape[0],shape[1],shape[2]+shape[0],shape[3]+shape[1]), (shapeCheck[0],shapeCheck[1],shapeCheck[2]+shapeCheck[0],shapeCheck[3]+shapeCheck[1])) and shape != shapeCheck:
@@ -59,18 +66,27 @@ for shape in dimensionsShapes:
             else:
                 dimensionsShapes.remove(shape)
 
+textBuffer = 5
+
+ct = 1
 for shapeFinalizaed in dimensionsShapes:
     x, y, w, h = shapeFinalizaed
+    x, y = x - BORDER_SHAPE_ADD, y - BORDER_SHAPE_ADD
+    w, h = w + BORDER_SHAPE_ADD * 2, h + BORDER_SHAPE_ADD  * 2
     cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
-    cv2.putText(im,"IDK",(x+w+10,y+h),0,0.3,(255,0,0))
-
-
-print(dimensionsShapes)
+    cv2.putText(im,"Shape - " + str(ct),(x+w+textBuffer,y+h),0,0.3,(255,0,0))
+    ct += 1
 
 cv2.imshow('Known', im)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
+
+
+
+
+
+# A bunch of random other code
 """
 for con in sizedContours:
     #Possible Clean

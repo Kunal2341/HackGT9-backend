@@ -10,22 +10,22 @@ def intersects(box1, box2):
 LOWER_BLUE_COLOR = [25,25,0]
 UPPER_BLUE_COLOR = [255,255,255]
 CONTOUR_SIZE_RESTRICTION = 40
-BORDER_SHAPE_ADD = 20
+BORDER_SHAPE_PERCENT = 0.05
 
 
 imagesFolder = "ex-images"
 example_img = os.path.join(imagesFolder, "1.jpg")
 
 #List of xy and width 
-img = cv2.imread(example_img)
+imgO = cv2.imread(example_img)
 
 # converting image into grayscale image
 scale_percent = 30
-width = int(img.shape[1] * scale_percent / 100)
-height = int(img.shape[0] * scale_percent / 100)
+width = int(imgO.shape[1] * scale_percent / 100)
+height = int(imgO.shape[0] * scale_percent / 100)
 dsize = (width, height)
 # resize image
-img = cv2.resize(img, dsize)
+img = cv2.resize(imgO, dsize)
 
 # Get image from between 2 main colors 
 imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -71,22 +71,32 @@ for shape in dimensionsShapes:
 textBuffer = 5
 printArray = []
 ct = 1
+savingImg = imgO
 for shapeFinalizaed in dimensionsShapes:
-    x, y, w, h = shapeFinalizaed
-    x, y = x - BORDER_SHAPE_ADD, y - BORDER_SHAPE_ADD
-    w, h = w + BORDER_SHAPE_ADD * 2, h + BORDER_SHAPE_ADD  * 2
+    border = max(int(w * imgO.shape[1] / img.shape[1] * BORDER_SHAPE_PERCENT), 
+                int(h * imgO.shape[0] / img.shape[0] * BORDER_SHAPE_PERCENT))
+    print("Border width is " + str(border))
+
+    x, y, w, h = shapeFinalizaed # Fix bro
+    x = int(x * imgO.shape[1] / img.shape[1] - border)
+    y = int(y * imgO.shape[0] / img.shape[0] - border)
+    w = int(w * imgO.shape[1] / img.shape[1]) + border * 2
+    h = int(h * imgO.shape[0] / img.shape[0]) + border * 2
+
+
     printArray.append([x,y,w,h])
-    cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
-    cv2.putText(im,"Shape - " + str(ct),(x+w+textBuffer,y+h),0,0.3,(255,0,0))
+    savingImg = cv2.rectangle(savingImg,(x,y),(x+w,y+h),(0,255,0),2)
+    savingImg = cv2.putText(savingImg,"Shape - " + str(ct),(x+w+textBuffer,y+h),0,0.3,(255,0,0))
     ct += 1
 
-cv2.imshow('Known', im)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+cv2.imwrite("test.png", savingImg)
+
+#cv2.imshow('Known', im)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
 
 print("-"*10)
 print("Detected " +str(len(dimensionsShapes)) + " shapes.")
-
 
 print(printArray)
 
@@ -142,7 +152,7 @@ cv2.imshow('Gausian Blur Something', morph)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 """
-
+"""
 img = imShapes
 gray = cv2.medianBlur(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY),5)
 _, threshold = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
@@ -180,3 +190,4 @@ for contour in shapeCountour:
 cv2.imshow('shapes', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+"""

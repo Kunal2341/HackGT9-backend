@@ -21,12 +21,12 @@ def get_shape(path_to_image, coordinate):
 
 def find_note(path_to_image, coordinate):
     """Return A - G note (Just return letter recognized inside shape, if none return empty string"""
-
+    # letter recognition  in shape
     return ""
 
 def generate_random_tune(path_to_image, coordinate):
     """After talking to rishi, generate some output given some shape"""
-
+    
     return 'bruh'
 
 def get_tune(path_to_image, coordinate):

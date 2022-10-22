@@ -4,11 +4,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "1.jpg")
+example_img = os.path.join(imagesFolder, "3.jpg")
 
 
 #List of xy and width 
-
 img = cv2.imread(example_img)
 
 # converting image into grayscale image
@@ -30,42 +29,76 @@ mask_blue = cv2.inRange(imghsv, lower_blue, upper_blue)
 #Show masked image
 # cv2.imshow("winname" , mask_blue)
 contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
 im = np.copy(img)
 
+imKnown = np.copy(img)
 sizedContours = []
-
+dimensionsShapes = []
 for c in contours:
     if (cv2.contourArea(c) > 40): 
         sizedContours.append(c)
-        
-        """
         rect = cv2.boundingRect(c)
         x,y,w,h = rect
-        print(rect)
-        cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
-        cv2.putText(im,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
-        """
+        dimensionsShapes.append([x,y,w,h])
+        cv2.rectangle(imKnown,(x,y),(x+w,y+h),(0,100,0),2)
+        cv2.putText(imKnown,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
+
 print("Detected " +str(len(sizedContours)) + " shapes.")
+cv2.imshow('Known', imKnown)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
+print(dimensionsShapes)
+for shape in dimensionsShapes:
+    for shapeCheck in dimensionsShapes:
+        if intersects((shape[0],shape[1],shape[2]+shape[0],shape[3]+shape[1]), (shapeCheck[0],shapeCheck[1],shapeCheck[2]+shapeCheck[0],shapeCheck[3]+shapeCheck[1])) and shape != shapeCheck:
+            if shape[2]*shape[3] > shapeCheck[2]*shapeCheck[3]:
+                dimensionsShapes.remove(shapeCheck)
+            else:
+                dimensionsShapes.remove(shape)
+
+for shapeFinalizaed in dimensionsShapes:
+    x, y, w, h = shapeFinalizaed
+    cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
+    cv2.putText(im,"IDK",(x+w+10,y+h),0,0.3,(255,0,0))
+
+
+print(dimensionsShapes)
+
+cv2.imshow('Known', im)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+"""
 for con in sizedContours:
     #Possible Clean
-    rect = cv2.boundingRect(c)
+    rect = cv2.boundingRect(con)
     x,y,w,h = rect
     print(rect)
+    intersect = False
     for c in sizedContours:
         Trect = cv2.boundingRect(c)
-        Tx,Ty,Tw,Th = rect
-        if intersects((x,y,w+x,h+y), (Tx,Ty,Tw+Tx,Th+Ty)):
+        Tx,Ty,Tw,Th = Trect
+        if intersects((x,y,w+x,h+y), (Tx,Ty,Tw+Tx,Th+Ty)) and (x,y,w+x,h+y) != (Tx,Ty,Tw+Tx,Th+Ty):
+            
+            print(x,y,w,h)
+            print(Tx,Ty,Tw,Th)
+            
             newX = min(x, Tx)
             newY = min(y, Ty)
             newW = x + w + Tw - abs(Tx - (x + w))
             newH = y + h + Th - abs(Ty - (y + h))
+            print(newX, newY, newW, newH)
+            print()
             cv2.rectangle(im,(newX,newY),(newX+newW,newY+newH),(0,255,0),2)
             cv2.putText(im,str(cv2.contourArea(c)),(newX+newW+10,newY+newH),0,0.3,(255,0,0))
-        else:
-            cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
-            cv2.putText(im,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
+            intersect = True
+    if not intersect:
+        cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
+        cv2.putText(im,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
+
 
 cv2.drawContours(im, contours, -1, (255, 0, 0), 1)
 
@@ -73,7 +106,7 @@ cv2.drawContours(im, contours, -1, (255, 0, 0), 1)
 cv2.imshow('Test Image Between 2 colors', im)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
+"""
 
 """
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

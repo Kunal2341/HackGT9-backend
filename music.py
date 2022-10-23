@@ -6,7 +6,7 @@ def playSound(instrument, note):
     elif instrument == "piano":
         playPiano(note, 4)
     elif instrument == "hat":
-        playHighHat()
+        playPiano(note, 7)
     else:
         playRandom()
 
@@ -15,9 +15,6 @@ def playPiano(note: str, scale: int):
 
 def playDrum():
     print("playing drum")
-
-def playHighHat():
-    playPiano("A", 7)
 
 def playRandom():
     print("playing the somehow random noise")

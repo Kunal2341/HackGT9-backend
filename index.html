@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html id='main' class="has-background-light">
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://kit.fontawesome.com/5381c343f6.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+        <!-- <link href="./index.css" type="text/css" rel="stylesheet"> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script type="module">
+      
+        const videoElement = document.getElementsByClassName('input_video')[0];
+        const canvasElement = document.getElementsByClassName('output_canvas')[0];
+        // const xCoord = document.getElementById("xcoord");
+        // const yCoord = document.getElementById("ycoord");
+        const canvasCtx = canvasElement.getContext('2d');
+        var currentZ;
+        var baselineDepth;
+        var baseline;
+        var point;
+        var base;
+        var arr = []
+        var colorArr=['has-background-warning', 'has-background-success','has-background-info', 'has-background-primary','has-background-light' ]
+        
+       
+        function smoothResult(b) {
+            // console.log(arr);
+            if (arr.length < 13) {
+               arr.push(b);
+               
+            }
+            else {
+                
+                var sum = 0;
+                for (let i = 0; i<arr.length; i++){
+                    sum = sum + arr[i]
+
+                }
+
+                if(((sum/arr.length) > baseline*2) && base.z > baselineDepth - .0012){
+                    
+                    console.log("Board was touched: " + Math.abs(point.z)*(sum/arr.length) + " Baseline: " + baseline + " Current depth: " + point.z);
+                    document.getElementById('main').className = colorArr[Math.floor(Math.random()*colorArr.length)];
+                  }
+                arr = []
+                
+            }
+            // console.log(arr)
+        }
+        
+        function setBaseline() {
+
+            baseline = getDistance(point, base);
+            baselineDepth = base.z;
+            console.log("Baseline Depth: " + baselineDepth)
+            console.log("Baseline Distance: " + baseline)
+            document.getElementById("baselineStatus").className = "mt-2 is-size-3 has-text-success"
+            document.getElementById("baselineStatus").innerHTML = "Complete"
+           
+        }
+        function getDistance(point, base){
+            
+            let x = (point.x - base.x)**2
+            let y = (point.y - base.y)**2
+            let z = (point.z - base.z)**2
+           
+            return 10*Math.sqrt(x+y+z);
+        }
+        async function sendData(xcoord, ycoord) {
+            
+        }
+        document.getElementById("baseline").addEventListener("click", setBaseline)
+        // document.getElementById("current").addEventListener("click" , getDistance(point, base))
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(
+                results.image, 0, 0, canvasElement.width, canvasElement.height);
+       
+                
+            if (results.multiHandLandmarks) {
+                
+
+                
+                for (const landmarks of results.multiHandLandmarks) {
+                //    
+                point = landmarks[8];
+                base = landmarks[5];
+                    smoothResult(getDistance(point, base));
+                    
+                    drawLandmarks(canvasCtx, landmarks, { color: '#FFFFFF', lineWidth: 2 });
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,
+                     {color: '#48C78E', lineWidth: 5});
+                }
+            }
+            canvasCtx.restore();
+        }
+
+        const hands = new Hands({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        });
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+        hands.onResults(onResults);
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
+
+            },
+            width: 1280,
+            height: 720
+        });
+        camera.start();
+    </script>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://bulma.io">
+            <h2 class="title is-5">Welcome to Board Band!</h2>
+          </a>
+      
+          
+        </div>
+        
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item">
+              Home
+            </a>
+      
+            <a class="navbar-item">
+              About
+            </a>
+      
+            
+            </div>
+          </div>
+          
+      
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <button class="button">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Github</span>
+                  </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <section class="hero">
+        <div class="hero-body">
+          <p class="title">
+            How to Use It:
+          </p>
+          <p class="subtitle">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.   
+          </p>
+        </div>
+      </section>
+    <div width="1280px" height="720px" class="pt-5 pb-5 container mt-5">
+        <canvas class="output_canvas mx-auto is-block" width="1280px" height="720px">
+        <video class="input_video"></video>
+        </canvas>
+        
+        
+        
+       
+    </div>
+    <div class="container is-align-self-auto m-auto">
+        <div class="is-flex is-flex-direction-row mt-3 is-justify-content-center">
+          <button class="is-medium button m-2 is-info" id="createBoard">Create Board</button>
+        <button class="is-medium m-2 button is-success" id="baseline">Set Baseline</button>
+        <p class="mt-2 mr-2 is-size-3">Base Line Status: </p><span id="baselineStatus" class="mt-2 is-size-3 has-text-danger">Incomplete</span>
+    </div>
+    </div>
+    
+</body>
+
+</html>

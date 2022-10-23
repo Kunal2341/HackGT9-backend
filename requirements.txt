@@ -9,4 +9,4 @@ google-auth
 google-cloud-vision
 imageio
 keras
-playSound
+playsound==1.2.2

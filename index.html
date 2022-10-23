@@ -30,7 +30,7 @@
     var arr = []
     var colorArr = ['has-background-warning', 'has-background-success', 'has-background-info', 'has-background-primary', 'has-background-light']
     var port = '8000'
-    var endpointCoord = 'tune/'
+    var endpointCoord = 'tune'
     var endpointImg = 'update'
 
     function smoothResult(b) {
@@ -52,19 +52,16 @@
           console.log("Board was touched: " + Math.abs(point.z) * (sum / arr.length) + " Baseline: " + baseline + " Current depth: " + point.z);
           document.getElementById('main').className = colorArr[Math.floor(Math.random() * colorArr.length)];
           let xhr = new XMLHttpRequest();
-          xhr.open("POST", "http://localhost:" + port + "/" + endpointCoord);
+          let x = 1280*point.x
+          let y = 720*point.y
+          xhr.open("POST", "http://localhost:" + port + "/" + endpointCoord + "/" + x + "_" + y);
 
           xhr.setRequestHeader("Accept", "application/json");
           xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
 
           xhr.onload = () => console.log(xhr.responseText);
-
-          let data = `{
-            "x": 1280*point.x,
-            "y": 720*point.y,
-              }`;
-
-          xhr.send(data);
+          xhr.send();
         }
         arr = []
 

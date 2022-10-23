@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import cv2
 import numpy as np
 import os
@@ -181,14 +181,14 @@ def get_tune(path_to_image, coordinate):
         "note": note
     }
 
-def collides(coordinate: JSCooordinate, coor):
+def collides(coordinate, coor):
     x1 = coor[0]
     y1 = coor[1]
     w = coor[2]
     h = coor[3]
 
-    x = coordinate.x
-    y = coordinate.y
+    x = float(coordinate["x"])
+    y = float(coordinate["y"])
 
     return x > x1 and x < (x1 + w) and y > y1 and y < (y1 + h)
 
@@ -196,27 +196,48 @@ def collides(coordinate: JSCooordinate, coor):
 def update_mapping(file_name: str):
     """Updates the areas_to_tunes"""
 
-    path_to_image = os.path.join(r"C:/Users/saksh/Downloads", file_name)
+    path_to_image = os.path.join(r"C:\Users\Saurinya\Downloads", file_name)
 
     coordinates = get_coordinates(path_to_image)
     temp = {}
 
+    img = cv2.imread(path_to_image)
+
     for coordinate in coordinates:
+
+        x1 = coordinate[0]
+        y1 = coordinate[1]
+        w = coordinate[2]
+        h = coordinate[3]
+
+        x2 = x1 + w
+        y2 = y1 + h
+
+        roi = img[y1:y2, x1:x2]
+
+        cv2.imshow("roi", roi)
+        cv2.waitKey(0)
         temp[tuple(coordinate)] = get_tune(path_to_image, coordinate)
 
     app.areas_to_tunes = temp
 
-@app.post("/tune/")
-def tune(coordinate: JSCooordinate):
+    return {"result": coordinates}
+
+@app.post("/tune/{points}")
+async def tune(points: str):
     """Plays the tune for the coordinate clicked"""
 
+    coordinate = {
+        "x": points.split('_')[0],
+        "y": points.split('_')[0],
+    }
     # print(app.areas_to_tunes)
     for coor in app.areas_to_tunes:
         # print(coor, collides(coordinate, coor))
         if (collides(coordinate, coor)):
             area = app.areas_to_tunes[coor]
             playSound(area["instrument"], area["note"])
-            return
+            return area["instrument"]
 
 @app.get("/mapping")
 def get_mapping():

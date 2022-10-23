@@ -4,10 +4,7 @@ import os
 import shapely
 def intersects(box1, box2):
     """Helper function for get_coordinates"""
-
     return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
-
-
 
 path_to_image = "ex-images/canvasImage.jpeg"
 

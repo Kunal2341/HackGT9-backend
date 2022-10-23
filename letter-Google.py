@@ -1,5 +1,8 @@
 from google.oauth2 import service_account
 import time
+import shapely
+
+
 start_time = time.time()
 credentials = service_account.Credentials.from_service_account_file("../hackgt-366316-0c3450bdab27.json")
 

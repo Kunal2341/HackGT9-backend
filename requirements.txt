@@ -10,3 +10,4 @@ google-cloud-vision
 imageio
 keras
 playsound==1.2.2
+shapely

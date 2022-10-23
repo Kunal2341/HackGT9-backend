@@ -12,6 +12,9 @@ import base64
 import json
 from music import playSound
 from pydantic import BaseModel, validator
+import shapely
+
+
 
 class JSCooordinate(BaseModel):
     x: float
@@ -129,12 +132,10 @@ def find_note(path_to_image, coordinate):
     print('Texts:')
 
     for text in texts:
-        print('\n"{}"'.format(text.description))
-
-        vertices = (['({},{})'.format(vertex.x, vertex.y)
-                    for vertex in text.bounding_poly.vertices])
-
-        print('bounds: {}'.format(','.join(vertices)))
+        p1 = Polygon([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
+        p2 = Polygon([(x1,y1), (x1,y2), (x2,y1), (x2, y2)])
+        if (p1.intersects(p2).area > 10): 
+            return text
 
     if response.error.message:
         return ""

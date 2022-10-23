@@ -56,7 +56,8 @@ def test_stuff():
     json_blob = {"x": 1500.0, "y": 2700.0}
     client.post("/tune/", json=json_blob)
 
-threading.Thread(target=test_stuff).start()
+# threading.Thread(target=test_stuff).start()
+test_stuff()
 
 # Coordinates for 2.jpg
 # [585, 3130, 706, 619]

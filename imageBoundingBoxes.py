@@ -14,7 +14,7 @@ BORDER_SHAPE_PERCENT = 0.03
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "unknown.png")
+example_img = os.path.join(imagesFolder, "canvasImageNEW.jpeg")
 
 #List of xy and width 
 imgO = cv2.imread(example_img)
@@ -30,17 +30,15 @@ img = cv2.resize(imgO, dsize)
 def emptyFunction(v):
     pass
 
-
-
-windowName = "Hello"
+windowName = "Playing with RGB for each WhiteBoard"
 cv2.namedWindow(windowName)
 
 cv2.createTrackbar('Lower - R', windowName, 0, 255, emptyFunction)
 cv2.createTrackbar('Lower - G', windowName, 0, 255, emptyFunction)
 cv2.createTrackbar('Lower - B', windowName, 0, 255, emptyFunction)
-cv2.createTrackbar('Upper - R', windowName, 0, 255, emptyFunction)
-cv2.createTrackbar('Upper - G', windowName, 0, 255, emptyFunction)
-cv2.createTrackbar('Upper - B', windowName, 0, 255, emptyFunction)
+cv2.createTrackbar('Upper - R', windowName, 159, 255, emptyFunction)
+cv2.createTrackbar('Upper - G', windowName, 101, 255, emptyFunction)
+cv2.createTrackbar('Upper - B', windowName, 128, 255, emptyFunction)
 
 # Get image from between 2 main colors 
 imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -81,19 +79,6 @@ while(True):
 
 cv2.waitKey(0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #-------------------------------------------------------
 
 contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -128,8 +113,10 @@ for shape in dimensionsShapes:
             if shape[2]*shape[3] > shapeCheck[2]*shapeCheck[3]:
                 dimensionsShapes.remove(shapeCheck)
             else:
-                dimensionsShapes.remove(shape)
-
+                try:
+                    dimensionsShapes.remove(shape)
+                except Exception as ValueError:
+                    print("Already done, passing value" + str(shape))
 textBuffer = 5
 printArray = []
 ct = 1

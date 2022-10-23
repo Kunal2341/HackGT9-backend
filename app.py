@@ -81,7 +81,10 @@ def get_coordinates(path_to_image: str):
                 if shape[2]*shape[3] > shapeCheck[2]*shapeCheck[3]:
                     dimensionsShapes.remove(shapeCheck)
                 else:
-                    dimensionsShapes.remove(shape)
+                    try:
+                        dimensionsShapes.remove(shape)
+                    except Exception as ValueError:
+                        print("Already done, passing value" + str(shape))
 
     bufferedDimensions = []
     savingImg = imgO

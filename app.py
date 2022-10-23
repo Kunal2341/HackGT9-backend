@@ -54,7 +54,8 @@ def get_coordinates(path_to_image: str):
     CONTOUR_SIZE_RESTRICTION = 40
     BORDER_SHAPE_PERCENT = 0.02
     imgO = cv2.imread(path_to_image)
-    
+    togetherBuffer = 10
+
     # converting image into grayscale image
     scale_percent = 30
     width = int(imgO.shape[1] * scale_percent / 100)
@@ -81,18 +82,39 @@ def get_coordinates(path_to_image: str):
     # Checks each value with all others in arrary to see intersection, removes smaller array
     for shape in dimensionsShapes:
         for shapeCheck in dimensionsShapes:
-            if intersects((shape[0],shape[1],shape[2]+shape[0],shape[3]+shape[1]), (shapeCheck[0],shapeCheck[1],shapeCheck[2]+shapeCheck[0],shapeCheck[3]+shapeCheck[1])) and shape != shapeCheck:
-                if shape[2]*shape[3] > shapeCheck[2]*shapeCheck[3]:
-                    dimensionsShapes.remove(shapeCheck)
+
+
+            if intersects((max(shape[0]-togetherBuffer,0),max(shape[1]-togetherBuffer,0),shape[2]+shape[0]+togetherBuffer,shape[3]+shape[1]+togetherBuffer), 
+                        (max(shapeCheck[0]-togetherBuffer,0),max(shapeCheck[1]-togetherBuffer,0),shapeCheck[2]+shapeCheck[0]+togetherBuffer,shapeCheck[3]+shapeCheck[1]+togetherBuffer)) and shape != shapeCheck:
+                
+                thePoints = []
+                thePoints.append((shape[0], shape[1]))
+                thePoints.append((shape[0] + shape[2], shape[1]))
+                thePoints.append((shape[0], shape[1] + shape[3]))
+                thePoints.append((shape[0] + shape[2], shape[1] + shape[3]))
+                thePoints.append((shapeCheck[0], shapeCheck[1]))
+                thePoints.append((shapeCheck[0] + shapeCheck[2], shapeCheck[1]))
+                thePoints.append((shapeCheck[0], shapeCheck[1] + shapeCheck[3]))
+                thePoints.append((shapeCheck[0] + shapeCheck[2], shapeCheck[1] + shapeCheck[3]))
+                
+
+                x, y = min(thePoints)
+                if max(thePoints) == thePoints[3]:
+                    w = shape[2]
+                    h = shape[3]
+                elif max(thePoints) == thePoints[7]:
+                    w = shapeCheck[2]
+                    h = shapeCheck[3]
                 else:
-                    try:
-                        dimensionsShapes.remove(shape)
-                    except Exception as ValueError:
-                        print("Already done, passing value" + str(shape))
+                    raise Exception("Ask help")
+                print(min(thePoints))
+                print(max(thePoints))
+                
+                cleanedDimensionShapes.append([x,y,w,h])
 
     bufferedDimensions = []
     savingImg = imgO
-    for shapeFinalizaed in dimensionsShapes:
+    for shapeFinalizaed in cleanedDimensionShapes:
         border = max(int(w * imgO.shape[1] / img.shape[1] * BORDER_SHAPE_PERCENT), 
                     int(h * imgO.shape[0] / img.shape[0] * BORDER_SHAPE_PERCENT))
         x, y, w, h = shapeFinalizaed 

@@ -162,7 +162,15 @@ def get_tune(path_to_image, coordinate):
     }
 
 def collides(coordinate: JSCooordinate, coor):
-    return coordinate.x > coor[0] and coordinate.x < coor[0]
+    x1 = coor[0]
+    y1 = coor[1]
+    w = coor[2]
+    h = coor[3]
+
+    x = coordinate.x
+    y = coordinate.y
+
+    return x > x1 and x < (x1 + w) and y > y1 and y < (y1 + h)
 
 @app.post("/update/{file_name}")
 def update_mapping(file_name: str):

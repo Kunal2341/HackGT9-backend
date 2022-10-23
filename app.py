@@ -43,6 +43,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def get_temp(path_to_image:str):
+
+    img = cv2.imread(path_to_image)
+    final = []
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    thresh = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)[1]
+
+    cv2.imshow("bounding_box", thresh)
+    cv2.waitKey(0)
+
+    result = img.copy()
+    contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = contours[0] if len(contours) == 2 else contours[1]
+    for cntr in contours:
+        x, y, w, h = cv2.boundingRect(cntr)
+        if (w * h) > 1000:
+            cv2.rectangle(result, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            # print("x,y,w,h:", x, y, w, h)
+            final.append([x, y, w, h])
+
+    # show thresh and result
+    cv2.imshow("bounding_box", result)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    return final
+
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""
 
@@ -225,7 +254,7 @@ def update_mapping(file_name: str):
     cv2.imshow("img", img)
     cv2.waitKey(0)
 
-    coordinates = get_coordinates(path_to_image)
+    coordinates = get_temp(path_to_image)
     temp = {}
 
     for coordinate in coordinates:

@@ -4,7 +4,7 @@ def playSound(instrument, note):
     if note == "":
         note = "D"
     if instrument == "drum":
-        playRandom()
+        playDrum()
     elif instrument == "piano":
         playPiano(note, 4)
     elif instrument == "hat":

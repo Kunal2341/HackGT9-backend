@@ -8,13 +8,14 @@ def intersects(box1, box2):
 
 
 LOWER_BLUE_COLOR = [0,0,0]
-UPPER_BLUE_COLOR = [159, 101, 128]
-CONTOUR_SIZE_RESTRICTION = 40
-BORDER_SHAPE_PERCENT = 0.03
+UPPER_BLUE_COLOR = [170, 140, 90]
+CONTOUR_SIZE_RESTRICTION = 10
+BORDER_SHAPE_PERCENT = 0.04
+togetherBuffer = 10
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "canvasImageNEW.jpeg")
+example_img = os.path.join(imagesFolder, "theMain.jpeg")
 
 #List of xy and width 
 imgO = cv2.imread(example_img)
@@ -36,9 +37,9 @@ cv2.namedWindow(windowName)
 cv2.createTrackbar('Lower - R', windowName, 0, 255, emptyFunction)
 cv2.createTrackbar('Lower - G', windowName, 0, 255, emptyFunction)
 cv2.createTrackbar('Lower - B', windowName, 0, 255, emptyFunction)
-cv2.createTrackbar('Upper - R', windowName, 159, 255, emptyFunction)
-cv2.createTrackbar('Upper - G', windowName, 101, 255, emptyFunction)
-cv2.createTrackbar('Upper - B', windowName, 128, 255, emptyFunction)
+cv2.createTrackbar('Upper - R', windowName, 170, 255, emptyFunction)
+cv2.createTrackbar('Upper - G', windowName, 140, 255, emptyFunction)
+cv2.createTrackbar('Upper - B', windowName, 90, 255, emptyFunction)
 
 # Get image from between 2 main colors 
 imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -81,7 +82,7 @@ cv2.waitKey(0)
 
 #-------------------------------------------------------
 
-contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+contours, _ = cv2.findContours(mask_blue, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 im = np.copy(img)
 imSizeRestrict = np.copy(img)
@@ -91,6 +92,16 @@ sizedContours = []
 dimensionsShapes = []
 
 shapeCountour = []
+
+"""for c in contours:
+    rect = cv2.boundingRect(c)
+    x,y,w,h = rect
+    cv2.rectangle(imSizeRestrict,(x,y),(x+w,y+h),(0,100,0),2)
+    cv2.putText(imSizeRestrict,str(cv2.contourArea(c)),(x+w+10,y+h),0,0.3,(255,0,0))
+
+cv2.imshow('Known', imSizeRestrict)
+cv2.waitKey(0)"""
+
 
 for c in contours:
     if (cv2.contourArea(c) > CONTOUR_SIZE_RESTRICTION): 
@@ -105,11 +116,43 @@ for c in contours:
 cv2.imshow('Known', imSizeRestrict)
 cv2.waitKey(0)
 
-
+cleanedDimensionShapes = []
 # Checks each value with all others in arrary to see intersection, removes smaller array
 for shape in dimensionsShapes:
     for shapeCheck in dimensionsShapes:
-        if intersects((shape[0],shape[1],shape[2]+shape[0],shape[3]+shape[1]), (shapeCheck[0],shapeCheck[1],shapeCheck[2]+shapeCheck[0],shapeCheck[3]+shapeCheck[1])) and shape != shapeCheck:
+
+
+        if intersects((max(shape[0]-togetherBuffer,0),max(shape[1]-togetherBuffer,0),shape[2]+shape[0]+togetherBuffer,shape[3]+shape[1]+togetherBuffer), 
+                    (max(shapeCheck[0]-togetherBuffer,0),max(shapeCheck[1]-togetherBuffer,0),shapeCheck[2]+shapeCheck[0]+togetherBuffer,shapeCheck[3]+shapeCheck[1]+togetherBuffer)) and shape != shapeCheck:
+            
+            thePoints = []
+            thePoints.append((shape[0], shape[1]))
+            thePoints.append((shape[0] + shape[2], shape[1]))
+            thePoints.append((shape[0], shape[1] + shape[3]))
+            thePoints.append((shape[0] + shape[2], shape[1] + shape[3]))
+            thePoints.append((shapeCheck[0], shapeCheck[1]))
+            thePoints.append((shapeCheck[0] + shapeCheck[2], shapeCheck[1]))
+            thePoints.append((shapeCheck[0], shapeCheck[1] + shapeCheck[3]))
+            thePoints.append((shapeCheck[0] + shapeCheck[2], shapeCheck[1] + shapeCheck[3]))
+            
+
+            x, y = min(thePoints)
+            if max(thePoints) == thePoints[3]:
+                w = shape[2]
+                h = shape[3]
+            elif max(thePoints) == thePoints[7]:
+                w = shapeCheck[2]
+                h = shapeCheck[3]
+            else:
+                raise Exception("Ask help")
+            print(min(thePoints))
+            print(max(thePoints))
+            
+            cleanedDimensionShapes.append([x,y,w,h])
+
+            """
+            cleanedDimensionShapes.append([min(shape[0], shapeCheck[0]), min(shape[1], shapeCheck[1]), max(shape[2], shapeCheck[2]), min(shape[3], shapeCheck[3])])
+            
             if shape[2]*shape[3] > shapeCheck[2]*shapeCheck[3]:
                 dimensionsShapes.remove(shapeCheck)
             else:
@@ -117,11 +160,14 @@ for shape in dimensionsShapes:
                     dimensionsShapes.remove(shape)
                 except Exception as ValueError:
                     print("Already done, passing value" + str(shape))
+
+            """
+
 textBuffer = 5
 printArray = []
 ct = 1
 savingImg = imgO
-for shapeFinalizaed in dimensionsShapes:
+for shapeFinalizaed in cleanedDimensionShapes:
     border = max(int(w * imgO.shape[1] / img.shape[1] * BORDER_SHAPE_PERCENT), 
                 int(h * imgO.shape[0] / img.shape[0] * BORDER_SHAPE_PERCENT))
     print("Border width is " + str(border))

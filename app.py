@@ -45,8 +45,12 @@ app.add_middleware(
 
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""
-    LOWER_BLUE_COLOR = [25,25,0]
-    UPPER_BLUE_COLOR = [255,255,255]
+
+    
+    print(path_to_image)
+
+    LOWER_BLUE_COLOR = [0,0,0]
+    UPPER_BLUE_COLOR = [159,101,128]
     CONTOUR_SIZE_RESTRICTION = 40
     BORDER_SHAPE_PERCENT = 0.05
     imgO = cv2.imread(path_to_image)
@@ -189,7 +193,7 @@ def collides(coordinate: JSCooordinate, coor):
 def update_mapping(file_name: str):
     """Updates the areas_to_tunes"""
 
-    path_to_image = os.path.join(app.folder_path, file_name)
+    path_to_image = os.path.join(r"C:/Users/saksh/Downloads", file_name)
 
     coordinates = get_coordinates(path_to_image)
     temp = {}
@@ -221,12 +225,7 @@ def get_mapping():
 def get_shapes(file_name):
     """Returns the tune for the coordinate clicked"""
     
-    path_to_image = os.path.join(app.folder_path, file_name)
-    coordinates = get_coordinates(path_to_image)
+    # path_to_image = os.path.join(r"C:/Users/saksh/Downloads", file_name)
+    # coordinates = get_coordinates(path_to_image)
+    return app.areas_to_tunes.keys()
     return coordinates
-
-@app.get("/shapes/{coordinate}")
-def test_note(coordinate):
-    """Returns the tune for the coordinate clicked"""
-    
-    find_note("ex-images/6.jpg", coordinate)

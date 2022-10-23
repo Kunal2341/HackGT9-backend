@@ -7,8 +7,8 @@ def intersects(box1, box2):
     return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
 
 
-LOWER_BLUE_COLOR = [40,50,30]
-UPPER_BLUE_COLOR = [200,200,200]
+LOWER_BLUE_COLOR = [0,0,0]
+UPPER_BLUE_COLOR = [159, 101, 128]
 CONTOUR_SIZE_RESTRICTION = 40
 BORDER_SHAPE_PERCENT = 0.03
 

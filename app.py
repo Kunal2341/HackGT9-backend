@@ -52,7 +52,7 @@ def get_coordinates(path_to_image: str):
     LOWER_BLUE_COLOR = [0,0,0]
     UPPER_BLUE_COLOR = [159,101,128]
     CONTOUR_SIZE_RESTRICTION = 40
-    BORDER_SHAPE_PERCENT = 0.05
+    BORDER_SHAPE_PERCENT = 0.02
     imgO = cv2.imread(path_to_image)
     
     # converting image into grayscale image
@@ -198,10 +198,12 @@ def update_mapping(file_name: str):
 
     path_to_image = os.path.join(r"C:\Users\Saurinya\Downloads", file_name)
 
+    img = cv2.imread(path_to_image)
+    cv2.imshow("img", img)
+    cv2.waitKey(0)
+
     coordinates = get_coordinates(path_to_image)
     temp = {}
-
-    img = cv2.imread(path_to_image)
 
     for coordinate in coordinates:
 
@@ -218,7 +220,7 @@ def update_mapping(file_name: str):
         cv2.imshow("roi", roi)
         cv2.waitKey(0)
         temp[tuple(coordinate)] = get_tune(path_to_image, coordinate)
-
+    cv2.destroyAllWindows()
     app.areas_to_tunes = temp
 
     return {"result": coordinates}

@@ -78,7 +78,8 @@ def get_coordinates(path_to_image: str):
             rect = cv2.boundingRect(c)
             x,y,w,h = rect
             dimensionsShapes.append([x,y,w,h])
-    
+    cleanedDimensionShapes = []
+
     # Checks each value with all others in arrary to see intersection, removes smaller array
     for shape in dimensionsShapes:
         for shapeCheck in dimensionsShapes:

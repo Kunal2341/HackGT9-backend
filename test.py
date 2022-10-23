@@ -37,7 +37,7 @@ def show_shapes():
         croppedImg = img[y1:y2, x1:x2]
         roi = perform_cleanup(croppedImg)
         shape = model.predict(roi)
-
+        
         prediction = np.argmax(shape)
         cv2.imshow(shapes[prediction], croppedImg)
         cv2.waitKey(0)
@@ -52,7 +52,20 @@ async def test_stuff():
     client.post("/update/2.jpg")
     await asyncio.sleep(5)
     
-    json_blob = {"x": 120.0, "y": 122.0}
+    json_blob = {"x": 1500.0, "y": 2700.0}
     client.post("/tune/", json=json_blob)
 
 test_stuff()
+
+# Coordinates for 2.jpg
+# [585, 3130, 706, 619]
+# [1453, 2550, 707, 687]
+# [526, 2537, 737, 717]
+# [2001, 2435, 504, 660]
+# [1437, 2147, 580, 626]
+# [1969, 1950, 508, 614]
+# [518, 1648, 704, 797]
+# [1374, 1185, 694, 744]
+# [2163, 906, 528, 678]
+# [1684, 380, 679, 656]
+# [417, 237, 879, 903]

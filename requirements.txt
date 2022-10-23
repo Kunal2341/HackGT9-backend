@@ -9,3 +9,6 @@ google-auth
 google-cloud-vision
 imageio
 keras
+git+https://github.com/FelixGSE/pypiano.git
+pyFluidSynth
+git+https://github.com/0xf0f/pyfluidsynth

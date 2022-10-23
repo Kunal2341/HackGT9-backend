@@ -1,5 +1,4 @@
-from pypiano import Piano
-from mingus.containers import Note
+from playsound import playsound
 
 def playSound(instrument, note):
     if instrument == "drum":
@@ -12,15 +11,12 @@ def playSound(instrument, note):
         playRandom()
 
 def playPiano(note: str, scale: int):
-    p = Piano()
-    p.play(note + '-' + str(scale))
+    playsound("./piano-mp3/" + note + str(scale) + ".mp3")
 
 def playDrum():
     print("playing drum")
 
 def playHighHat():
-    print("playing piano")
-
     playPiano("A", 7)
 
 def playRandom():

@@ -170,8 +170,8 @@ def get_shape(path_to_image, coordinate):
     y2 = y1 + h
 
     roi = img[y1:y2, x1:x2]
-    cv2.imshow("roi", roi)
-    cv2.waitKey(0)
+    # cv2.imshow("roi", roi)
+    # cv2.waitKey(0)
     img = perform_cleanup(roi)
     prediction = np.argmax(app.model.predict(img))
     return prediction
@@ -274,8 +274,8 @@ def update_mapping(file_name: str):
         tune = get_tune(path_to_image, coordinate)
         # if tune["instrument"] is not "random":
         temp[tuple(coordinate)] = tune
-        cv2.imshow(tune["instrument"], roi)
-        cv2.waitKey(0)
+        # cv2.imshow(tune["instrument"], roi)
+        # cv2.waitKey(0)
 
     cv2.destroyAllWindows() 
     app.areas_to_tunes = temp

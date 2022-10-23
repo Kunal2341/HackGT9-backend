@@ -60,15 +60,15 @@ def get_temp(path_to_image:str):
     contours = contours[0] if len(contours) == 2 else contours[1]
     for cntr in contours:
         x, y, w, h = cv2.boundingRect(cntr)
-        if (w * h) > 1000:
+        if (w * h) > 2000 and w * h < 1280 * 780 /3:
             cv2.rectangle(result, (x, y), (x + w, y + h), (0, 0, 255), 2)
             # print("x,y,w,h:", x, y, w, h)
             final.append([x, y, w, h])
 
     # show thresh and result
-    cv2.imshow("bounding_box", result)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("bounding_box", result)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     return final
 
@@ -161,16 +161,17 @@ def get_shape(path_to_image, coordinate):
     
     img = cv2.imread(path_to_image)
 
-    x1 = coordinate[0]
-    y1 = coordinate[1]
-    w = coordinate[2]
-    h = coordinate[3]
+    x1 = coordinate[0] - 50
+    y1 = coordinate[1] - 50
+    w = coordinate[2] + 100
+    h = coordinate[3] + 100
 
     x2 = x1 + w
     y2 = y1 + h
 
     roi = img[y1:y2, x1:x2]
-
+    cv2.imshow("roi", roi)
+    cv2.waitKey(0)
     img = perform_cleanup(roi)
     prediction = np.argmax(app.model.predict(img))
     return prediction
@@ -251,8 +252,8 @@ def update_mapping(file_name: str):
     path_to_image = os.path.join(r"C:\Users\Saurinya\Downloads", file_name)
 
     img = cv2.imread(path_to_image)
-    cv2.imshow("img", img)
-    cv2.waitKey(0)
+    # cv2.imshow("img", img)
+    # cv2.waitKey(0)
 
     coordinates = get_temp(path_to_image)
     temp = {}
@@ -269,10 +270,14 @@ def update_mapping(file_name: str):
 
         roi = img[y1:y2, x1:x2]
 
-        cv2.imshow("roi", roi)
+        
+        tune = get_tune(path_to_image, coordinate)
+        # if tune["instrument"] is not "random":
+        temp[tuple(coordinate)] = tune
+        cv2.imshow(tune["instrument"], roi)
         cv2.waitKey(0)
-        temp[tuple(coordinate)] = get_tune(path_to_image, coordinate)
-    cv2.destroyAllWindows()
+
+    cv2.destroyAllWindows() 
     app.areas_to_tunes = temp
 
     return {"result": coordinates}
@@ -291,6 +296,9 @@ async def tune(points: str):
         if (collides(coordinate, coor)):
             area = app.areas_to_tunes[coor]
             playSound(area["instrument"], area["note"])
+            cv2.imshow("img", coor)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
             return area["instrument"]
 
 @app.get("/mapping")

@@ -32,7 +32,7 @@ app.shapes = {
 app.folder_path = "ex-images"
 app.model = load_model("./shapes.model.01.h5")
 origins = [
-    "http://localhost:61331",
+    "*",
 ]
 
 app.add_middleware(

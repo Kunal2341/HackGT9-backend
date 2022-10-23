@@ -101,15 +101,25 @@
 
       return new Blob([ia], { type: mimeString });
     }
+    function hashCode(string){
+    var hash = 0;
+    for (var i = 0; i < string.length; i++) {
+        var code = string.charCodeAt(i);
+        hash = ((hash<<5)-hash)+code;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
     function createBoard() {
       let canvas = document.createElement('canvas');
       canvas = document.getElementById('mainCanvas')
       let image = canvas.toDataURL('image/jpeg');
       //  console.log(image)
       var blob = dataURItoBlob(image);
-      saveAs(blob, 'canvasImage.jpeg')
+      console.log(hashCode(image));
+      saveAs(blob, 'canvasImage' + Math.abs(hashCode(image)) + '.jpeg')
       let xhr = new XMLHttpRequest();
-          xhr.open("POST", "http://localhost:" + port + "/" + endpointImg + "/canvasImage.jpeg");
+          xhr.open("POST", "http://localhost:" + port + "/" + endpointImg + '/canvasImage' + Math.abs(hashCode(image)) + '.jpeg');
 
           xhr.setRequestHeader("Accept", "application/json");
           xhr.setRequestHeader("Content-Type", "application/json");

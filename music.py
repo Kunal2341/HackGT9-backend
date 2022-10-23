@@ -1,6 +1,8 @@
 from playsound import playsound
 
 def playSound(instrument, note):
+    if note == "":
+        note = "D"
     if instrument == "drum":
         playRandom()
     elif instrument == "piano":

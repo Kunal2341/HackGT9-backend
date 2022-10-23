@@ -10,6 +10,12 @@ from google.cloud import vision
 import io
 import base64
 import json
+from music import playSound
+from pydantic import BaseModel, validator
+
+class JSCooordinate(BaseModel):
+    x: float
+    y: float
 
 app = FastAPI()
 app.areas_to_tunes = {}
@@ -146,14 +152,17 @@ def get_tune(path_to_image, coordinate):
     shape_idx = get_shape(path_to_image, coordinate)
     note = ''
     if shape_idx > 0:
-        note = find_note(path_to_image, coordinate)
+        note = "" # find_note(path_to_image, coordinate)
     else:
-        note = generate_random_tune(path_to_image, coordinate)
+        note = 0 #generate_random_tune(path_to_image, coordinate)
 
     return {
         "instrument": app.shapes[shape_idx],
         "note": note
     }
+
+def collides(coordinate: JSCooordinate, coor):
+    return coordinate.x > coor[0] and coordinate.x < coor[0]
 
 @app.post("/update/{file_name}")
 def update_mapping(file_name: str):
@@ -169,11 +178,14 @@ def update_mapping(file_name: str):
 
     app.areas_to_tunes = temp
 
-@app.get("/tune/{coordinate}")
-def tune(coordinate):
-    """Returns the tune for the coordinate clicked"""
+@app.get("/tune/")
+def tune(coordinate: JSCooordinate):
+    """Plays the tune for the coordinate clicked"""
     
-    return app.areas_to_tunes
+    for coor in app.areas_to_tunes:
+        if (collides(coordinate, coor)):
+            playSound(app.aread_to_tunes[coor])
+            return
 
 @app.get("/mapping")
 def get_mapping():

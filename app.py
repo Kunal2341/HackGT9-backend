@@ -89,8 +89,8 @@ def get_coordinates(path_to_image: str):
         border = max(int(w * imgO.shape[1] / img.shape[1] * BORDER_SHAPE_PERCENT), 
                     int(h * imgO.shape[0] / img.shape[0] * BORDER_SHAPE_PERCENT))
         x, y, w, h = shapeFinalizaed 
-        x = int(x * imgO.shape[1] / img.shape[1] - border)
-        y = int(y * imgO.shape[0] / img.shape[0] - border)
+        x = max(int(x * imgO.shape[1] / img.shape[1] - border),0)
+        y = max(int(y * imgO.shape[0] / img.shape[0] - border),0)
         w = int(w * imgO.shape[1] / img.shape[1]) + border * 2
         h = int(h * imgO.shape[0] / img.shape[0]) + border * 2
 

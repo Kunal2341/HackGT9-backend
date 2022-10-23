@@ -101,14 +101,13 @@ if __name__ == "__main__":
 
 	print(len(newAudio))
 
-	for sec in int(len(newAudio)/1000):
-		
 
-	t1 = t1 * 1000 #Works in milliseconds
-	t2 = t2 * 1000
-	
-	newAudio = newAudio[t1:t2]
-	newAudio.export('newSong.wav', format="wav") #Exports to a wav file in the current path.
+	for sec in int(len(newAudio)/1000):
+		t1 = sec
+		t2 = t1 + 1000
+
+		newAudio = newAudio[t1:t2]
+		newAudio.export('newSong.wav', format="wav") #Exports to a wav file in the current path.
 
 
 	file_name = "./wavFiles/walk_the_line.wav"

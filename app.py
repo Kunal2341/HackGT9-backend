@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 from utils import perform_cleanup, intersects
-from keras.models import load_mode
+from keras.models import load_model
 
 app = FastAPI()
 app.areas_to_tunes = {}

@@ -1,63 +1,48 @@
-# from starlette.testclient import TestClient
-# import cv2
-# import numpy as np
-# import os
-# from app import app
-# from numpy import savetxt
-# from utils import perform_cleanup
-# from keras.models import load_model
+from starlette.testclient import TestClient
+import cv2
+import numpy as np
+import os
+from app import app
+from numpy import savetxt
+from utils import perform_cleanup
+from keras.models import load_model
 
-# client = TestClient(app)
+client = TestClient(app)
 
-# def test_update():
-#     resp = client.post("/update/2.jpg")
+def test_update():
+    resp = client.post("/update/2.jpg")
 
-# def show_shapes():
-#     file_name = "2.jpg"
+def show_shapes():
+    file_name = "2.jpg"
 
-#     coords = client.get("/shapes/" + file_name).json()
-#     # print(coords.json())
-#     img = cv2.imread("ex-images/" + file_name)
-#     model = load_model("./shapes.model.01.h5")
-#     shapes = {
-#         0: "random",
-#         1: "drum",
-#         2: "piano",
-#         3: "hat" 
-#     }
+    coords = client.get("/shapes/" + file_name).json()
+    # print(coords.json())
+    img = cv2.imread("ex-images/" + file_name)
+    model = load_model("./shapes.model.01.h5")
+    shapes = {
+        0: "random",
+        1: "drum",
+        2: "piano",
+        3: "hat" 
+    }
 
-#     for shape in coords[2:]:
-#         x1 = shape[0]
-#         y1 = shape[1]
-#         w = shape[2]
-#         h = shape[3]
-#         x2 = x1 + w
-#         y2 = y1 + h
-#         croppedImg = img[y1:y2, x1:x2]
-#         roi = perform_cleanup(croppedImg)
-#         shape = model.predict(roi)
+    for shape in coords[2:]:
+        x1 = shape[0]
+        y1 = shape[1]
+        w = shape[2]
+        h = shape[3]
+        x2 = x1 + w
+        y2 = y1 + h
+        croppedImg = img[y1:y2, x1:x2]
+        roi = perform_cleanup(croppedImg)
+        shape = model.predict(roi)
 
-#         prediction = np.argmax(shape)
-#         cv2.imshow(shapes[prediction], croppedImg)
-#         cv2.waitKey(0)
+        prediction = np.argmax(shape)
+        cv2.imshow(shapes[prediction], croppedImg)
+        cv2.waitKey(0)
 
-#     cv2.destroyAllWindows() 
+    cv2.destroyAllWindows() 
 
 # test_update()
 # show_shapes()
 # perform_prediction(cv2.imread("ex-images/2.jpg"))
-
-
-# import numpy as np
-# import cv2 as cv
-
-# img = cv.imread('ex-images/2.jpg')
-# imgray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-# ret, thresh = cv.threshold(imgray, 127, 255, 0)
-# contours, _ = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-# cv.drawContours(img, contours, -1, (0,255,0), 3)
-
-# print(len(contours))
-# cv2.imshow('Contours', img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()

@@ -188,3 +188,9 @@ def get_shapes(file_name):
     path_to_image = os.path.join(app.folder_path, file_name)
     coordinates = get_coordinates(path_to_image)
     return coordinates
+
+@app.get("/shapes/{coordinate}")
+def test_note(coordinate):
+    """Returns the tune for the coordinate clicked"""
+    
+    find_note("ex-images/6.jpg", coordinate)

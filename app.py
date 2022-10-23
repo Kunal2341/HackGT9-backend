@@ -14,7 +14,7 @@ from music import playSound
 from pydantic import BaseModel, validator
 import shapely
 from sympy import Point, Polygon
-
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class JSCooordinate(BaseModel):
@@ -31,6 +31,17 @@ app.shapes = {
 }
 app.folder_path = "ex-images"
 app.model = load_model("./shapes.model.01.h5")
+origins = [
+    "http://localhost:61331",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_coordinates(path_to_image: str):
     """Returns the coordinates of the shapes in the image"""

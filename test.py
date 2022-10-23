@@ -7,6 +7,7 @@ from numpy import savetxt
 from utils import perform_cleanup
 from keras.models import load_model
 import asyncio
+import threading, time
 
 client = TestClient(app)
 
@@ -48,14 +49,14 @@ def show_shapes():
 # show_shapes()
 # perform_prediction(cv2.imread("ex-images/2.jpg"))
 
-async def test_stuff():
+def test_stuff():
     client.post("/update/2.jpg")
-    await asyncio.sleep(5)
-    
+    time.sleep(5)
+
     json_blob = {"x": 1500.0, "y": 2700.0}
     client.post("/tune/", json=json_blob)
 
-test_stuff()
+threading.Thread(target=test_stuff).start()
 
 # Coordinates for 2.jpg
 # [585, 3130, 706, 619]

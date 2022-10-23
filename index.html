@@ -29,9 +29,9 @@
     var base;
     var arr = []
     var colorArr = ['has-background-warning', 'has-background-success', 'has-background-info', 'has-background-primary', 'has-background-light']
-    var port = '3000'
-    var endpointCoord = 'coords'
-    var endpointImg = 'board'
+    var port = '8000'
+    var endpointCoord = 'tune/'
+    var endpointImg = 'update'
 
     function smoothResult(b) {
       // console.log(arr);
@@ -109,18 +109,14 @@
       var blob = dataURItoBlob(image);
       saveAs(blob, 'canvasImage.jpeg')
       let xhr = new XMLHttpRequest();
-          xhr.open("POST", "http://localhost:" + port + "/" + endpointImg);
+          xhr.open("POST", "http://localhost:" + port + "/" + endpointImg + "/canvasImage.jpeg");
 
           xhr.setRequestHeader("Accept", "application/json");
           xhr.setRequestHeader("Content-Type", "application/json");
 
           xhr.onload = () => console.log(xhr.responseText);
+          xhr.send();
 
-          let data = `{
-            "name": 'canvasImage',
-              }`;
-
-          xhr.send(data);
       var fd = new FormData(document.forms[0]);
       fd.append("canvasImage", blob);
       console.log(fd)

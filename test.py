@@ -51,9 +51,7 @@ def show_shapes():
 
 def test_stuff():
     client.post("/update/2.jpg")
-    time.sleep(5)
-
-    json_blob = {"x": 1500.0, "y": 2700.0}
+    json_blob = {"x": 1400.0, "y": 1200.0}
     client.post("/tune/", json=json_blob)
 
 # threading.Thread(target=test_stuff).start()

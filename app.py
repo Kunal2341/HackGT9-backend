@@ -188,13 +188,16 @@ def update_mapping(file_name: str):
 
     app.areas_to_tunes = temp
 
-@app.get("/tune/")
+@app.post("/tune/")
 def tune(coordinate: JSCooordinate):
     """Plays the tune for the coordinate clicked"""
-    
+
+    # print(app.areas_to_tunes)
     for coor in app.areas_to_tunes:
+        # print(coor, collides(coordinate, coor))
         if (collides(coordinate, coor)):
-            playSound(app.aread_to_tunes[coor])
+            area = app.areas_to_tunes[coor]
+            playSound(area["instrument"], area["note"])
             return
 
 @app.get("/mapping")

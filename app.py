@@ -2,8 +2,8 @@ from fastapi import FastAPI
 import cv2
 import numpy as np
 import os
-from utils import perform_cleanup
-from keras.models import load_model, intersects
+from utils import perform_cleanup, intersects
+from keras.models import load_mode
 
 app = FastAPI()
 app.areas_to_tunes = {}

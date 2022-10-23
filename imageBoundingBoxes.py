@@ -7,14 +7,14 @@ def intersects(box1, box2):
     return not (box1[2] < box2[0] or box1[0] > box2[2] or box1[1] > box2[3] or box1[3] < box2[1])
 
 
-LOWER_BLUE_COLOR = [25,25,0]
-UPPER_BLUE_COLOR = [255,255,255]
+LOWER_BLUE_COLOR = [100,100,100]
+UPPER_BLUE_COLOR = [250,250,250]
 CONTOUR_SIZE_RESTRICTION = 40
 BORDER_SHAPE_PERCENT = 0.03
 
 
 imagesFolder = "ex-images"
-example_img = os.path.join(imagesFolder, "2.jpg")
+example_img = os.path.join(imagesFolder, "canvasImage.jpeg")
 
 #List of xy and width 
 imgO = cv2.imread(example_img)
@@ -33,7 +33,11 @@ lower_blue = np.array(LOWER_BLUE_COLOR)
 upper_blue = np.array(UPPER_BLUE_COLOR)
 mask_blue = cv2.inRange(imghsv, lower_blue, upper_blue)
 #Show masked image
-# cv2.imshow("winname" , mask_blue)
+cv2.imshow("winname" , mask_blue)
+cv2.waitKey(0)
+
+
+
 contours, _ = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 im = np.copy(img)

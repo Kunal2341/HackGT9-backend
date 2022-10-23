@@ -34,6 +34,8 @@ def perform_cleanup(img):
     _, imagethreshold = cv2.threshold(imagegray, 127, 255, cv2.THRESH_BINARY) # Black on white
     imagethreshold = 1.0 - (imagethreshold.astype(float))/ 255.0
 
+    return np.array([imagethreshold])
+
 def intersects(box1, box2):
     """Helper function for get_coordinates"""
 

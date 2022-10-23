@@ -36,7 +36,9 @@ def show_shapes():
         croppedImg = img[y1:y2, x1:x2]
         roi = perform_cleanup(croppedImg)
         shape = model.predict(roi)
-        cv2.imshow(shapes[shape], croppedImg)
+
+        prediction = np.argmax(shape)
+        cv2.imshow(shapes[prediction], croppedImg)
         cv2.waitKey(0)
 
     cv2.destroyAllWindows() 
